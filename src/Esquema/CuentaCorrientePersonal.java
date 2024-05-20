@@ -40,10 +40,14 @@ public class CuentaCorrientePersonal extends CuentaBancaria implements Imprimibl
     //Interfaz: Imprimible
     @Override
     public String devolverInfoString() {
-        String mensaje = "Titular: " + titular.getNombre() + "\n" +
-                super.devolverInfoString() +
-                "\nComision de mantenimiento: " + this.comision;
-        return mensaje;
+        //"|\tIBAN\t|\tPROPIETARIO\t|\tSALDO\t|\tDETALLES\t|"
+        String[] cuenta = super.devolverInfoString().split(",");
+        StringBuffer mensaje = new StringBuffer("|\t");
+        mensaje.append(cuenta[0]+"\t|\t");
+        mensaje.append(this.getTitular().getNombre()+" "+this.getTitular().getApellido()+"\t|\t");
+        mensaje.append(cuenta[1]+"\t|\t");
+        mensaje.append("Coste de Comisión: " + this.getComision() +"\t|");
+        return mensaje.toString();
     }
 
     public String tipoCuenta() {

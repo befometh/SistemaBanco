@@ -15,6 +15,29 @@ public class Banco {
         this.numCuentas = 0;
     }
 
+    //Getters y Setters
+
+
+    public int getMAX_CUENTAS() {
+        return MAX_CUENTAS;
+    }
+
+    public int getNumCuentas() {
+        return numCuentas;
+    }
+
+    public void setNumCuentas(int numCuentas) {
+        this.numCuentas = numCuentas;
+    }
+
+    /**
+     * Inicializador de cuentas
+     * @param datosPersonales
+     * @param tipoCuenta
+     * @param saldoInicial
+     * @param esEmpresa
+     * @return
+     */
     public boolean abrirCuenta(String[][] datosPersonales, int tipoCuenta, double saldoInicial, boolean esEmpresa) {
         CuentaBancaria dato;
         if (this.numCuentas >= this.MAX_CUENTAS) {
@@ -23,10 +46,10 @@ public class Banco {
         } else {
             switch (tipoCuenta) {
                 case 1:
-                    dato = crearAhorros(datosPersonales[0], saldoInicial);
+                    dato = crearCorriente(esEmpresa, datosPersonales, saldoInicial);
                     break;
                 case 2:
-                    dato = crearCorriente(esEmpresa, datosPersonales, saldoInicial);
+                    dato = crearAhorros(datosPersonales[0], saldoInicial);
                     break;
                 default:
                     dato = null;
@@ -43,49 +66,11 @@ public class Banco {
 
     public String listarCuentas() {
         StringBuffer msg = new StringBuffer(
-                "|\tIBAN\t|\tPROPIETARIO\t|\tSALDO\t|\tDETALLES\t|"
+                "|\tIBAN\t|\tPROPIETARIO\t|\tSALDO\t|\tDETALLES\t|\n"
         );
-        for (CuentaBancaria cuenta : this.cuentas) {
-            msg.append("|\t" + cuenta.getIBAN());
-            switch(cuenta.tipoCuenta()) {
-                case "Ahorros":
-                    msg.append(mostrarCuenta((CuentaAhorro) cuenta));
-                    break;
-                case "Personal":
-                    msg.append(mostrarCuenta((CuentaCorrientePersonal) cuenta));
-                    break;
-                case "Empresa":
-                    msg.append(mostrarCuenta((CuentaCorrienteEmpresa) cuenta));
-                    break;
-            }
+        for(int i = 0; i < this.getNumCuentas(); i++) {
+            msg.append(this.cuentas[i].devolverInfoString()+"\n");
         }
-        return msg.toString();
-    }
-
-    private String mostrarCuenta(CuentaAhorro cuenta) {
-        StringBuffer msg = new StringBuffer();
-        msg.append("\t|\t" + cuenta.getTitular().getNombre() + " ");
-        msg.append(cuenta.getTitular().getApellido());
-        msg.append("\t|\t" + cuenta.getSaldo());
-        msg.append("\t|\tInteres de Remuneración: " + cuenta.getInteres());
-        return msg.toString();
-    }
-
-    private String mostrarCuenta(CuentaCorrientePersonal cuenta){
-        StringBuffer msg = new StringBuffer();
-        msg.append("\t|\t" + cuenta.getTitular().getNombre() + " ");
-        msg.append(cuenta.getTitular().getApellido());
-        msg.append("\t|\t" + cuenta.getSaldo());
-        msg.append("\t|\tComision de Manejo: " + cuenta.getComision());
-        return msg.toString();
-    }
-
-    private String mostrarCuenta(CuentaCorrienteEmpresa cuenta){
-        StringBuffer msg = new StringBuffer();
-        msg.append("\t|\t" + cuenta.getEmpresa().getNombreEmp() + " ");
-        msg.append("\t|\t" + cuenta.getSaldo());
-        msg.append("\t|\tMáximo Descubierto: " + cuenta.getMaxDescubierto());
-        msg.append("\tComisión fija por cada descubierto: " + cuenta.comisionDescubierto());
         return msg.toString();
     }
 
@@ -99,14 +84,16 @@ public class Banco {
             if (esEmpresa) {
                 boolean confirm = false;
                 do {
+                    sc = new Scanner(System.in);
                     System.out.println("Por favor ingrese el nombre de la empresa:");
                     nombreEmp = sc.nextLine();
                     System.out.println("El nombre de su empresa es: " + nombreEmp +
                             "\n¿Está seguro? 1:Si 2:No");
-                    if (sc.nextInt() == 1) {
+                    int eleccion = sc.nextInt();
+                    if (eleccion == 1) {
                         confirm = true;
                     }
-                } while (confirm);
+                } while (!confirm);
                 int i = 0;
                 for (String[] propietario : datosPersonales) {
                     propietarios[i] = new Persona(propietario[0], propietario[1], propietario[2]);
@@ -147,7 +134,7 @@ public class Banco {
         do {
             temp = new StringBuffer("ES");
             for (int i = 0; i < 20; i++)
-                temp.append(Math.random() * 10);
+                temp.append((int)(Math.random() * 10));
             dato = temp.toString();
             if (this.numCuentas > 0) {
                 int j = 0;

@@ -32,7 +32,7 @@ public abstract class CuentaBancaria implements Imprimible, ClaseCuenta {
     //Interfaz: Imprimible
     @Override
     public String devolverInfoString() {
-        return "IBAN: " + iban + "\nSaldo: " + saldo;
+        return iban +","+ saldo;
     }
 
     public String tipoCuenta(){

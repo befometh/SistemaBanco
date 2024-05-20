@@ -44,12 +44,24 @@ public class CuentaCorrienteEmpresa extends CuentaBancaria implements Imprimible
 
     @Override
     public String devolverInfoString() {
-        StringBuffer mensaje = new StringBuffer("Nombre Empresa: " + empresa.getNombreEmp() + "\n");
-        for (Persona persona : empresa.getPropietarios())
-            mensaje.append("\tPropietario: " + persona.getNombre() + "\n");
-        mensaje.append(super.devolverInfoString());
-        mensaje.append("Max Descubierto: " + maxDescubierto + "\n");
-        mensaje.append("Interes Descubierto: " + interesDescubierto + "\n");
+    //"|\tIBAN\t|\tPROPIETARIO\t|\tSALDO\t|\tDETALLES\t|"
+        String[] cuenta = super.devolverInfoString().split(",");
+        StringBuffer mensaje = new StringBuffer("|\t");
+        mensaje.append(cuenta[0]+"\t|\t");
+        mensaje.append(empresa.getNombreEmp()+"\t|\t");
+        mensaje.append(cuenta[1]+"\t|\t");
+        mensaje.append("Max Descubierto: " + maxDescubierto + " , Interes Descubierto: " + interesDescubierto + "\t|");
+        return mensaje.toString();
+    }
+
+    public String devolverPropietarios(){
+        StringBuffer mensaje = new StringBuffer("Lista de propietarios:\n");
+        int contador=1;
+        for(Persona propietario: empresa.getPropietarios()) {
+            mensaje.append(contador+". "+propietario.getNombre() +" "+ propietario.getApellido() +"\n");
+            mensaje.append("DNI: "+propietario.getDni()+"\n");
+            contador++;
+        }
         return mensaje.toString();
     }
 

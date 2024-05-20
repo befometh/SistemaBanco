@@ -33,10 +33,14 @@ public class CuentaAhorro extends CuentaBancaria implements ClaseCuenta, Imprimi
     //Interfaz: Imprimible
     @Override
     public String devolverInfoString() {
-        String mensaje = "Titular: " + titular.getNombre() + "\n" +
-                super.devolverInfoString() +
-                "\nTipo de Interes: " + this.interes;
-        return mensaje;
+        //"|\tIBAN\t|\tPROPIETARIO\t|\tSALDO\t|\tDETALLES\t|"
+        String[] cuenta = super.devolverInfoString().split(",");
+        StringBuffer mensaje = new StringBuffer("|\t");
+        mensaje.append(cuenta[0]+"\t|\t");
+        mensaje.append(this.getTitular()+"\t|\t");
+        mensaje.append(cuenta[1]+"\t|\t");
+        mensaje.append("Ganancia por Interés: " + this.getInteres() +"\t|");
+        return mensaje.toString();
     }
 
     public String tipoCuenta() {

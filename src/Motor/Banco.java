@@ -165,14 +165,22 @@ public class Banco {
         return dato;
     }
 
-    public String buscarCuenta(String dato) {
+    public String mostrarCuenta(String dato) {
+        int ubicacion = buscarCuenta(dato);
+        if(ubicacion == -1)
+            return "";
+        else
+            return cuentas[ubicacion].devolverInfoString();
+    }
+
+    private int buscarCuenta(String dato) {
         int i=0;
         int tam = getNumCuentas();
         while(i < tam && !cuentas[i].getIBAN().equals(dato))
             i++;
         if(i<tam)
-            return cuentas[i].devolverInfoString();
+            return i;
         else
-            return "";
+            return -1;
     }
 }

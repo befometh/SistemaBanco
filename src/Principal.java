@@ -7,7 +7,6 @@ import static Motor.Validador.validarPatron;
 public class Principal {
     public static void main(String[] args) {
 
-
         Scanner sn;
         Banco banco = new Banco();
         int opcion;
@@ -16,7 +15,6 @@ public class Principal {
         while (!salir) {
             sn = new Scanner(System.in);
             sn.useDelimiter("\n");
-            sn.useLocale(Locale.US);
             System.out.println("""
                     1. Abrir una nueva cuenta.
                     2. Ver un listado de las cuentas disponibles
@@ -92,8 +90,8 @@ public class Principal {
                         else {
                             separador();
                             System.out.println("No se pudo crear la cuenta, Se ha producido un error");
-                            separador();
                         }
+                        separador();
                         break; //Fin case 1
 
                     case 2:
@@ -113,8 +111,7 @@ public class Principal {
                             dato = pedirDato("Por favor ingrese el IBAN de la cuenta a buscar:");
                             if(validarPatron(dato,"[Ee][Ss][0-9]{20}")){
                                 dato = dato.toUpperCase();
-                                System.out.println(dato);
-                                String msg = banco.buscarCuenta(dato);
+                                String msg = banco.mostrarCuenta(dato);
                                 if(msg.isEmpty()){
                                     System.out.println("No se ha encontrado el dato");
                                 }
@@ -132,7 +129,7 @@ public class Principal {
 
                     case 4:
 
-                        break;
+                        break;//Fin case 4
 
 
                     case 5:
@@ -170,16 +167,17 @@ public class Principal {
 
     public static double pedirDoble(String nomDato) {
         Scanner teclado;
-        double opcion;
+        String opcion;
         try {
             teclado = new Scanner(System.in);
             System.out.println(nomDato);
-            opcion = teclado.nextDouble();
+            opcion = teclado.nextLine();
+            opcion = opcion.replace(",",".");
+            return Double.parseDouble(opcion);
         } catch (Exception e) {
             System.err.println("El dato que ha ingresado no es válido, vuelva a intentarlo.");
             return -1;
         }
-        return opcion;
     }
 
     public static String pedirDato(String nomDato) {

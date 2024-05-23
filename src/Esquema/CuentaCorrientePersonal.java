@@ -2,11 +2,19 @@ package Esquema;
 
 import Interfaces.*;
 
-public class CuentaCorrientePersonal extends CuentaBancaria implements Imprimible, ClaseCuenta {
+public class CuentaCorrientePersonal extends CuentaBancaria implements Imprimible {
     Persona titular;
     double comision;
-//Constructor
 
+    /**
+     * Constructor
+     * @param nombre del titular de la cuenta
+     * @param apellido del titular
+     * @param dni del titular
+     * @param iban asociado a la cuenta
+     * @param saldo inicial de la cuenta
+     * @param comision porcentaje de comisión que se lleva el banco.
+     */
     public CuentaCorrientePersonal(String nombre,
                                    String apellido,
                                    String dni,
@@ -37,6 +45,10 @@ public class CuentaCorrientePersonal extends CuentaBancaria implements Imprimibl
         this.comision = comision;
     }
 
+    /**
+     * Método que permite que se entregue los datos a los usuarios, cumple con el formato del método cabecera() de la clase Principal
+     * @return El dato ya construido.
+     */
     //Interfaz: Imprimible
     @Override
     public String devolverInfoString() {
@@ -48,9 +60,5 @@ public class CuentaCorrientePersonal extends CuentaBancaria implements Imprimibl
         mensaje.append(cuenta[1]+"\t|\t");
         mensaje.append("Coste de Comisión: " + this.getComision() +"\t|");
         return mensaje.toString();
-    }
-
-    public String tipoCuenta() {
-        return "Personal";
     }
 }

@@ -1,13 +1,26 @@
+/**
+ * @author Cristyan Morales Acevedo
+ * @desc Clase CuentaAhorro, contiene lo básico que necesita todas las cuentas de ahorro, clase tipo POYO, hereda de CuentaBancaria
+ */
 package Esquema;
 
 import Interfaces.*;
 
-public class CuentaAhorro extends CuentaBancaria implements ClaseCuenta, Imprimible {
-    private double interes;
-    private Persona titular;
+public class CuentaAhorro extends CuentaBancaria implements Imprimible {
+    private double interes; //Porcentaje de interés de la cuenta
+    private Persona titular; //Nombre del titular
 
+    /**
+     * Constructor
+     * @param nombre del titular
+     * @param apellido del titular
+     * @param dni del titular
+     * @param iban de la cuenta
+     * @param saldo inicial de la cuenta
+     * @param interes mensual que se pagará al usuario
+     */
     public CuentaAhorro(String nombre, String apellido, String dni, String iban, double saldo, double interes) {
-        super(iban, saldo);
+        super(iban, saldo); //Se invoca el constructor de CuentaBancaria, y se le entregan los datos necesarios, como el iban y el saldo
         titular = new Persona(nombre, apellido, dni);
         this.interes = interes;
     }
@@ -29,7 +42,10 @@ public class CuentaAhorro extends CuentaBancaria implements ClaseCuenta, Imprimi
         this.titular = titular;
     }
 
-
+    /**
+     * Método que permite que se entregue los datos a los usuarios, cumple con el formato del método cabecera() de la clase Principal
+     * @return El dato ya construido.
+     */
     //Interfaz: Imprimible
     @Override
     public String devolverInfoString() {
@@ -41,10 +57,6 @@ public class CuentaAhorro extends CuentaBancaria implements ClaseCuenta, Imprimi
         mensaje.append(cuenta[1]+"\t|\t");
         mensaje.append("Ganancia por Interés: " + this.getInteres() +"\t|");
         return mensaje.toString();
-    }
-
-    public String tipoCuenta() {
-        return "Ahorros";
     }
 
 }

@@ -1,3 +1,7 @@
+/**
+ * @author Cristyan Morales Acevedo
+ * @desc Motor principal del programa: Banco, hace de controlador y a la vez resuelve problemas al conectar con la base "Esquema" y sus componentes
+ */
 package Motor;
 
 import Esquema.*;
@@ -208,10 +212,15 @@ public class Banco {
 
     public boolean ingresoBancario(String dato, double ingreso) {
         int pos = buscarCuenta(dato);
-        if(pos == -1) return false;
-        else{
-            cuentas[pos].setSaldo(cuentas[pos].getSaldo() + ingreso);
-            return true;
+        if(ingreso > 0) {
+            if (pos == -1) return false;
+            else {
+                cuentas[pos].setSaldo(cuentas[pos].getSaldo() + ingreso);
+                return true;
+            }
+        } else{
+            System.out.println("El monto del ingreso no puede ser un valor negativo");
+            return false;
         }
     }
 

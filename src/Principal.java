@@ -50,7 +50,6 @@ public class Principal {
                                 esEmpresa = true;
                                 break;
                             case 2:
-                                esEmpresa = false;
                                 break;
                             default:
                                 seleccion = -1;
@@ -66,7 +65,6 @@ public class Principal {
                                         """);
                                 switch (seleccion) {
                                     case 1:
-                                        tipoCuenta = 1;
                                         break;
                                     case 2:
                                         tipoCuenta = 2;
@@ -120,7 +118,7 @@ public class Principal {
                                 if(msg.isEmpty()){
                                     System.out.println("No se ha encontrado el dato");
                                 }
-                                else{3
+                                else{
                                     separador();
                                     cabeceroTabla();
                                     separador();
@@ -211,8 +209,8 @@ public class Principal {
         String[][] propietarios = new String[num][3];
         int contador = 1;
         for (String[] propietario : propietarios) {
-            propietario[0] = pedirDato(contador + ". Nombres: ","[A-Za-záéíóú\s]+","Asegurese que está ingresando un valor correcto y vuelva a intentarlo");
-            propietario[1] = pedirDato("Apellidos: ","[A-Za-záéíóú\s]+","Asegurese que está ingresando un valor correcto y vuelva a intentarlo");
+            propietario[0] = pedirDato(contador + ". Nombres: ", "[A-Za-zÁÉÍÓÚáéíóú ]+","Asegurese que está ingresando un valor correcto y vuelva a intentarlo");
+            propietario[1] = pedirDato("Apellidos: ","[A-Za-zÁÉÍÓÚáéíóú ]+","Asegurese que está ingresando un valor correcto y vuelva a intentarlo");
             propietario[2] = pedirDato("DNI: ", "[XxYy0-9][0-9]{7}[A-Za-z]","El dato ingresado no tiene el formato esperado, recuerde el formato DNI 12345678Z o X2345678Z");
             contador++;
         }

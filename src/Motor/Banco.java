@@ -40,7 +40,7 @@ public class Banco {
      */
     public boolean abrirCuenta(String[][] datosPersonales, int tipoCuenta, double saldoInicial, boolean esEmpresa) {
         CuentaBancaria dato;
-        if (this.numCuentas >= this.MAX_CUENTAS) {
+        if (this.numCuentas >= getMAX_CUENTAS()) {
             System.out.println("No hay espacio para mas cuentas");
             return false;
         } else {
@@ -58,20 +58,10 @@ public class Banco {
                 System.out.println("Se ha ingresado un valor inválido, vuelva a intentarlo");
                 return false;
             }
-            this.cuentas[this.numCuentas] = dato;
-            this.numCuentas++;
+            this.cuentas[getNumCuentas()] = dato;
+            setNumCuentas(getNumCuentas()+1);
             return true;
         }
-    }
-
-    public String listarCuentas() {
-        StringBuffer msg = new StringBuffer(
-                "|\tIBAN\t|\tPROPIETARIO\t|\tSALDO\t|\tDETALLES\t|\n"
-        );
-        for(int i = 0; i < this.getNumCuentas(); i++) {
-            msg.append(this.cuentas[i].devolverInfoString()+"\n");
-        }
-        return msg.toString();
     }
 
     private CuentaBancaria crearCorriente(boolean esEmpresa, String[][] datosPersonales, double saldoInicial) {
@@ -149,6 +139,14 @@ public class Banco {
         return dato;
     }
 
+    public String listarCuentas() {
+        StringBuffer msg = new StringBuffer();
+        for(int i = 0; i < this.getNumCuentas(); i++) {
+            msg.append(this.cuentas[i].devolverInfoString()+"\n");
+        }
+        return msg.toString();
+    }
+
     private double pedirDoble(String tipoDato) {
         Scanner sc;
         double dato = 0;
@@ -165,5 +163,16 @@ public class Banco {
             }
         } while (error);
         return dato;
+    }
+
+    public String buscarCuenta(String dato) {
+        int i=0;
+        int tam = getNumCuentas();
+        while(i < tam && !cuentas[i].getIBAN().equals(dato))
+            i++;
+        if(i<tam)
+            return cuentas[i].devolverInfoString();
+        else
+            return "";
     }
 }

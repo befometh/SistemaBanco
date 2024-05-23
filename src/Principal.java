@@ -30,6 +30,7 @@ public class Principal {
 
             try {
                 opcion = sn.nextInt();
+                boolean error = false;
                 switch (opcion) {
                     case 1:
                         boolean esEmpresa = false;
@@ -38,8 +39,8 @@ public class Principal {
                         int tipoCuenta = 1;
                         double saldoInicial = 0;
                         System.out.println("Ha elegido crear nueva cuenta.");
+                        separador();
                         seleccion = pedirOpcion("""
-                                --------------------------------------------------
                                 ¿Pertenece a una persona particular o una empresa?
                                 1. Empresa
                                 2. Particular
@@ -54,7 +55,9 @@ public class Principal {
                             default:
                                 seleccion = -1;
                         }
-                        if (seleccion != -1) {
+                        if(seleccion == -1)
+                            error = true;
+                        if (!error) {
                             if (!esEmpresa) {
                                 seleccion = pedirOpcion("""
                                         Escoja el tipo de cuenta que quiere crear:
@@ -71,9 +74,11 @@ public class Principal {
                                     default:
                                         seleccion = -1;
                                 }
+                                if(seleccion == -1)
+                                    error = true;
                             }
                         }
-                        if (seleccion != -1) {
+                        if (!error) {
                             if (tipoCuenta == 1 && esEmpresa) {
                                 seleccion = pedirOpcion("Por favor ingrese el número de personas que componen la titularidad de su empresa");
                                 propietarios = (ingresarPropietarios(seleccion));
@@ -81,24 +86,50 @@ public class Principal {
                                 propietarios = (ingresarPropietarios(1));
                             }
                             saldoInicial = pedirDoble("La cantidad inicial a ingresar: ");
+                            if (saldoInicial < 0)
+                                error = true;
                         }
-                        if (seleccion != -1)
+                        if (!error)
                             banco.abrirCuenta(propietarios, tipoCuenta, saldoInicial, esEmpresa);
-                        else System.out.println("No se pudo crear la cuenta, Se ha producido un error");
-                        break;
+                        else {
+                            separador();
+                            System.out.println("No se pudo crear la cuenta, Se ha producido un error");
+                            separador();
+                        }
+                        break; //Fin case 1
 
                     case 2:
                         if (banco.getNumCuentas() == 0) System.out.println("Aún no ha ingresado ningún valor");
                         else {
+                            cabeceroTabla();
+                            separador();
                             System.out.println(banco.listarCuentas());
                         }
-                        break;
-
+                        separador();
+                        break; //Fin case 2
 
                     case 3:
-
-
-                        break;
+                        if(banco.getNumCuentas() == 0) System.out.println("Aún no se ha ingresado ningún valor");
+                        else{
+                            String dato;
+                            dato = pedirDato("Por favor ingrese el IBAN de la cuenta a buscar:");
+                            if(validarPatron(dato,"[Ee][Ss][0-9]{20}")){
+                                dato = dato.toUpperCase();
+                                System.out.println(dato);
+                                String msg = banco.buscarCuenta(dato);
+                                if(msg.isEmpty()){
+                                    System.out.println("No se ha encontrado el dato");
+                                }
+                                else{3
+                                    separador();
+                                    cabeceroTabla();
+                                    separador();
+                                    System.out.println(msg);
+                                }
+                            }
+                        }
+                        separador();
+                        break; //Fin case 3
 
 
                     case 4:
@@ -160,7 +191,7 @@ public class Principal {
         return teclado.nextLine();
     }
 
-    public static String pedirDato(String nomDato, String patron) {
+    public static String pedirDato(String nomDato, String patron, String msgerr) {
         Scanner teclado;
         String dato;
         boolean error = true;
@@ -171,7 +202,7 @@ public class Principal {
             if (validarPatron(dato, patron))
                 error = false;
             else
-                System.err.println("El dato ingresado no tiene el formato esperado, recuerde el formato DNI 12345678Z o X2345678Z");
+                System.err.println(msgerr);
         } while (error);
         return dato;
     }
@@ -180,11 +211,19 @@ public class Principal {
         String[][] propietarios = new String[num][3];
         int contador = 1;
         for (String[] propietario : propietarios) {
-            propietario[0] = pedirDato(contador + ". Nombres: ");
-            propietario[1] = pedirDato("Apellidos: ");
-            propietario[2] = pedirDato("DNI: ", "[XxYy0-9][0-9]{7}[A-Za-z]");
+            propietario[0] = pedirDato(contador + ". Nombres: ","[A-Za-záéíóú\s]+","Asegurese que está ingresando un valor correcto y vuelva a intentarlo");
+            propietario[1] = pedirDato("Apellidos: ","[A-Za-záéíóú\s]+","Asegurese que está ingresando un valor correcto y vuelva a intentarlo");
+            propietario[2] = pedirDato("DNI: ", "[XxYy0-9][0-9]{7}[A-Za-z]","El dato ingresado no tiene el formato esperado, recuerde el formato DNI 12345678Z o X2345678Z");
             contador++;
         }
         return propietarios;
+    }
+
+    public static void separador(){
+        System.out.println("--------------------------------------------------");
+    }
+
+    public static void cabeceroTabla(){
+        System.out.println("|\tIBAN\t|\tPROPIETARIO\t|\tSALDO\t|\tDETALLES\t|");
     }
 }

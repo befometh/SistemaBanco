@@ -85,8 +85,14 @@ public class Principal {
                             if (saldoInicial < 0)
                                 error = true;
                         }
-                        if (!error)
-                            banco.abrirCuenta(propietarios, tipoCuenta, saldoInicial, esEmpresa);
+                        if (!error) {
+                            String iban = banco.abrirCuenta(propietarios, tipoCuenta, saldoInicial, esEmpresa);
+                            System.out.println("Se ha creado la cuenta con éxito, cuenta creada: ");
+                            separador();
+                            cabeceroTabla();
+                            separador();
+                            System.out.println(banco.mostrarCuenta(iban));
+                        }
                         else {
                             separador();
                             System.out.println("No se pudo crear la cuenta, Se ha producido un error");
@@ -95,7 +101,7 @@ public class Principal {
                         break; //Fin case 1
 
                     case 2:
-                        if (banco.getNumCuentas() == 0) System.out.println("Aún no ha ingresado ningún valor");
+                        if (banco.getNumCuentas() == 0) System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar");
                         else {
                             cabeceroTabla();
                             separador();
@@ -105,7 +111,7 @@ public class Principal {
                         break; //Fin case 2
 
                     case 3:
-                        if(banco.getNumCuentas() == 0) System.out.println("Aún no se ha ingresado ningún valor");
+                        if(banco.getNumCuentas() == 0) System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar");
                         else{
                             String dato;
                             dato = pedirDato("Por favor ingrese el IBAN de la cuenta a buscar:");
@@ -128,17 +134,59 @@ public class Principal {
 
 
                     case 4:
-
+                        if(banco.getNumCuentas()==0) System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar");
+                        else{
+                            String dato;
+                            dato = pedirDato("Por favor ingrese el IBAN de la cuenta a buscar:");
+                            if(validarPatron(dato,"[Ee][Ss][0-9]{20}")){
+                                dato = dato.toUpperCase();
+                                double ingreso = pedirDoble("Ingrese el monto que desea ingresar");
+                                error = banco.ingresoBancario(dato,ingreso);
+                                if(!error) System.out.println("No se ha encontrado el dato");
+                                else System.out.println("Se ha realizado el ingreso con éxito. nuevo Saldo: "+ banco.obtenerSaldo(dato));
+                            }
+                        }
+                        separador();
                         break;//Fin case 4
 
 
                     case 5:
-
-                        break;
+                        if(banco.getNumCuentas()==0) System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar");
+                        else{
+                            String dato;
+                            dato = pedirDato("Por favor ingrese el IBAN de la cuenta a buscar:");
+                            if(validarPatron(dato,"[Ee][Ss][0-9]{20}")){
+                                dato = dato.toUpperCase();
+                                double retiro = pedirDoble("Ingrese el monto que desea retirar");
+                                error = banco.retiroBancario(dato,retiro);
+                                if(!error) {
+                                    if(banco.obtenerSaldo(dato) < retiro)
+                                        System.out.println("Su cuenta tiene saldo insuficiente");
+                                    else
+                                        System.out.println("No se ha encontrado el dato");
+                                }
+                                else System.out.println("Su retiro se ha completado con éxito, nuevo Saldo: "+ banco.obtenerSaldo(dato));
+                            }
+                        }
+                        separador();
+                        break; //Fin case 5
 
                     case 6:
-
-                        break;
+                        if(banco.getNumCuentas()==0) System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar");
+                        else{
+                            String dato;
+                            dato = pedirDato("Por favor ingrese el IBAN de la cuenta a buscar:");
+                            if(validarPatron(dato,"[Ee][Ss][0-9]{20}")){
+                                dato = dato.toUpperCase();
+                                double monto = banco.obtenerSaldo(dato);
+                                if(monto == -1) System.out.println("No se ha encontrado el dato");
+                                else {
+                                    System.out.println("El saldo actual de su cuenta es: " + monto);
+                                }
+                            }
+                        }
+                        separador();
+                        break; // Fin case 6
 
 
                     case 7:

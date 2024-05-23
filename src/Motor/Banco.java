@@ -38,11 +38,11 @@ public class Banco {
      * @param esEmpresa
      * @return
      */
-    public boolean abrirCuenta(String[][] datosPersonales, int tipoCuenta, double saldoInicial, boolean esEmpresa) {
+    public String abrirCuenta(String[][] datosPersonales, int tipoCuenta, double saldoInicial, boolean esEmpresa) {
         CuentaBancaria dato;
         if (this.numCuentas >= getMAX_CUENTAS()) {
             System.out.println("No hay espacio para mas cuentas");
-            return false;
+            return "";
         } else {
             switch (tipoCuenta) {
                 case 1:
@@ -56,14 +56,22 @@ public class Banco {
             }
             if (dato == null) {
                 System.out.println("Se ha ingresado un valor inválido, vuelva a intentarlo");
-                return false;
+                return "";
             }
-            this.cuentas[getNumCuentas()] = dato;
+            int pos = getNumCuentas();
+            this.cuentas[pos] = dato;
             setNumCuentas(getNumCuentas()+1);
-            return true;
+            return this.cuentas[pos].getIBAN();
         }
     }
 
+    /**
+     * Método que permite crear específicamente una cuenta corriente
+     * @param esEmpresa le indica al método si trata con una empresa
+     * @param datosPersonales un arreglo que contiene el nombre, apellido y dni de cada persona, en ese orden
+     * @param saldoInicial valor inicial con el que empieza la cuenta
+     * @return La cuenta corriente ya creada
+     */
     private CuentaBancaria crearCorriente(boolean esEmpresa, String[][] datosPersonales, double saldoInicial) {
         CuentaBancaria dato;
         String nombreEmp;
@@ -109,6 +117,12 @@ public class Banco {
         }
     }
 
+    /**
+     *
+     * @param datosPersonales
+     * @param saldoInicial
+     * @return
+     */
     private CuentaBancaria crearAhorros(String[] datosPersonales, double saldoInicial) {
         CuentaAhorro dato;
         String iban = crearIBAN();
@@ -117,6 +131,10 @@ public class Banco {
         return dato;
     }
 
+    /**
+     *
+     * @return
+     */
     private String crearIBAN() {
         StringBuffer temp;
         String dato;
@@ -139,6 +157,10 @@ public class Banco {
         return dato;
     }
 
+    /**
+     *
+     * @return
+     */
     public String listarCuentas() {
         StringBuffer msg = new StringBuffer();
         for(int i = 0; i < this.getNumCuentas(); i++) {
@@ -182,5 +204,33 @@ public class Banco {
             return i;
         else
             return -1;
+    }
+
+    public boolean ingresoBancario(String dato, double ingreso) {
+        int pos = buscarCuenta(dato);
+        if(pos == -1) return false;
+        else{
+            cuentas[pos].setSaldo(cuentas[pos].getSaldo() + ingreso);
+            return true;
+        }
+    }
+
+    public boolean retiroBancario(String dato, double retiro) {
+        int pos = buscarCuenta(dato);
+        if(pos == -1) return false;
+        else{
+            double diferencia = cuentas[pos].getSaldo() - retiro;
+            if(diferencia >= 0){
+                cuentas[pos].setSaldo(diferencia);
+                return true;
+            }
+            else return false;
+        }
+    }
+
+    public double obtenerSaldo(String dato) {
+        int pos = buscarCuenta(dato);
+        if(pos == -1) return -1;
+        else return cuentas[pos].getSaldo();
     }
 }

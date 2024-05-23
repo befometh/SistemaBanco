@@ -17,7 +17,6 @@ public class Principal {
             sn = new Scanner(System.in);
             sn.useDelimiter("\n");
             sn.useLocale(Locale.US);
-            System.out.println("1. Abrir una nueva cuenta.");
             System.out.println("""
                     1. Abrir una nueva cuenta.
                     2. Ver un listado de las cuentas disponibles

@@ -37,7 +37,7 @@ public class CuentaAhorro extends CuentaBancaria implements ClaseCuenta, Imprimi
         String[] cuenta = super.devolverInfoString().split(",");
         StringBuffer mensaje = new StringBuffer("|\t");
         mensaje.append(cuenta[0]+"\t|\t");
-        mensaje.append(this.getTitular()+"\t|\t");
+        mensaje.append(this.getTitular().getNombre()+" "+this.getTitular().getApellido()+"\t|\t");
         mensaje.append(cuenta[1]+"\t|\t");
         mensaje.append("Ganancia por Interés: " + this.getInteres() +"\t|");
         return mensaje.toString();

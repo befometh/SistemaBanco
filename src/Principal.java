@@ -33,7 +33,7 @@ public class Principal {
 
             try {
                 opcion = sn.nextInt();
-                boolean error = false; //Booleano que va a auditar el programa constantemente, validando si hay errores de ingreso, si hay error, no se continua más esta sección y se arroja error
+                boolean error = false; //Booleano que va a auditar el programa constantemente, validando si hay errores de ingreso, si hay error, no se continúa más esta sección y se arroja error
                 switch (opcion) {
                     case 1:
                         boolean esEmpresa = false; //Inicialización de la variable esEmpresa, quien va a ser verdadera si lo es y falsa si no lo es, más adelante
@@ -84,7 +84,7 @@ public class Principal {
                                 seleccion = pedirOpcion("Por favor ingrese el número de personas que componen la titularidad de su empresa"); //Se solicita el número de propietarios de la empresa, y ese valor se indica para crear el arreglo que va a llevar sus datos personales
                                 propietarios = (ingresarPropietarios(seleccion));
                             } else {
-                                propietarios = (ingresarPropietarios(1)); //En el caso de no ser empresa, se da por hecho que solo hay un solo propietario como persona natural, aún siendo una cuenta corriente
+                                propietarios = (ingresarPropietarios(1)); //En el caso de no ser empresa, se da por hecho que solo hay un propietario como persona natural, aun siendo una cuenta corriente
                             }
                             saldoInicial = pedirDoble("La cantidad inicial a ingresar: "); //Se asigna la cantidad inicial, no debe ser un número negativo
                             if (saldoInicial < 0)
@@ -94,7 +94,7 @@ public class Principal {
                             String iban = banco.abrirCuenta(propietarios, tipoCuenta, saldoInicial, esEmpresa); //Se crea la cuenta, abrirCuenta() de Banco devuelve el número de IBAN de la cuenta ya creada, para ser listada con facilidad.
                             System.out.println("Se ha creado la cuenta con éxito, cuenta creada: ");
                             cabeceroTabla();
-                            System.out.println(banco.mostrarCuenta(iban)); //Se muestra la información de la cuenta recién creada
+                            System.out.println(banco.buscarCuenta(iban)); //Se muestra la información de la cuenta recién creada
                         }
                         else {
                             separador();
@@ -104,7 +104,7 @@ public class Principal {
                         break; //Fin case 1
 
                     case 2:
-                        if (banco.getNumCuentas() == 0) System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar"); //Este error se presenta constantemente en el código, se manifiesta si aún no se ha creado ninguna cuenta
+                        if (banco.listaVacia()) System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar"); //Este error se presenta constantemente en el código, se manifiesta si aún no se ha creado ninguna cuenta
                         else {
                             cabeceroTabla();
                             System.out.println(banco.listarCuentas()); //Se solicita la lista de cuentas total
@@ -113,13 +113,13 @@ public class Principal {
                         break; //Fin case 2
 
                     case 3:
-                        if(banco.getNumCuentas() == 0) System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar");
+                        if(banco.listaVacia()) System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar");
                         else{
                             String dato;
                             dato = pedirDato("Por favor ingrese el IBAN de la cuenta a buscar:");
-                            if(validarPatron(dato,"[Ee][Ss][0-9]{20}")){ //se usa el método estático de Validadores validarPatrón para verificar que el iban cumpla con las características
+                            if(validarPatron(dato,"[Ee][Ss][0-9]{20}")){ //se usa el método estático de Validadores validarPatron para verificar que el iban cumpla con las características
                                 dato = dato.toUpperCase(); //Se asegura que la forma del IBAN tenga caracteres en mayúscula
-                                String msg = banco.mostrarCuenta(dato); //Se invoca al método de banco mostrarCuenta(), si falla arroja un String vacio ("")
+                                String msg = banco.buscarCuenta(dato); //Se invoca al método de banco mostrarCuenta(), si falla arroja un String vacio ("")
                                 if(msg.isEmpty()){
                                     System.out.println("No se ha encontrado el dato"); //Error si no se encuentra el dato
                                 }
@@ -132,10 +132,8 @@ public class Principal {
                         }
                         separador();
                         break; //Fin case 3
-
-
                     case 4:
-                        if(banco.getNumCuentas()==0) System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar");
+                        if(banco.listaVacia()) System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar");
                         else{
                             String dato;
                             dato = pedirDato("Por favor ingrese el IBAN de la cuenta a buscar:");
@@ -152,7 +150,7 @@ public class Principal {
 
                     //A efectos prácticos retiro e ingreso se comportan de manera similar
                     case 5:
-                        if(banco.getNumCuentas()==0) System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar");
+                        if(banco.listaVacia()) System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar");
                         else{
                             String dato;
                             dato = pedirDato("Por favor ingrese el IBAN de la cuenta a buscar:");
@@ -173,7 +171,7 @@ public class Principal {
                         break; //Fin case 5
                     //Igual que con retiro e ingreso mostrar el saldo se comportan de manera muy similar
                     case 6:
-                        if(banco.getNumCuentas()==0) System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar");
+                        if(banco.listaVacia()) System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar");
                         else{
                             String dato;
                             dato = pedirDato("Por favor ingrese el IBAN de la cuenta a buscar:");

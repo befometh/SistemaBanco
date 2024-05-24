@@ -242,7 +242,7 @@ public class Banco {
     }
 
     /**
-     * Modifica la cuenta en caso e un retiro
+     * Modifica la cuenta en caso es un retiro
      * @param iban IBAN de la cuenta a la que se hará un retiro
      * @param retiro monto a retirar
      * @return verdadero si la transacción es exitosa, falso si hay errores como que el IBAN no se encuentre o no se pueda realizar el retiro

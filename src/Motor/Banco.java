@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class Banco {
 
-    private CuentaBancaria[] cuentas;
+    private final CuentaBancaria[] cuentas;
     private final int MAX_CUENTAS = 100;
     private int numCuentas;
 
@@ -38,11 +38,11 @@ public class Banco {
 
     /**
      * Inicializador de cuentas
-     * @param datosPersonales
-     * @param tipoCuenta
-     * @param saldoInicial
-     * @param esEmpresa
-     * @return
+     * @param datosPersonales array de dos campos: Campo 1 = número de clientes (1 de no ser una empresa) y Campo 2 = tipo de dato, (puede ser nombre, apellido o DNI, en ese orden)
+     * @param tipoCuenta 1 = Corriente, 2 = Ahorros
+     * @param saldoInicial saldo con el que se crea la cuenta
+     * @param esEmpresa booleano, verdadero si es empresa, falso si no
+     * @return IBAN de la cuenta ya creada
      */
     public String abrirCuenta(String[][] datosPersonales, int tipoCuenta, double saldoInicial, boolean esEmpresa) {
         CuentaBancaria dato;
@@ -50,16 +50,11 @@ public class Banco {
             System.out.println("No hay espacio para mas cuentas");
             return "";
         } else {
-            switch (tipoCuenta) {
-                case 1:
-                    dato = crearCorriente(esEmpresa, datosPersonales, saldoInicial);
-                    break;
-                case 2:
-                    dato = crearAhorros(datosPersonales[0], saldoInicial);
-                    break;
-                default:
-                    dato = null;
-            }
+            dato = switch (tipoCuenta) {
+                case 1 -> crearCorriente(esEmpresa, datosPersonales, saldoInicial);
+                case 2 -> crearAhorros(datosPersonales[0], saldoInicial);
+                default -> null;
+            };
             if (dato == null) {
                 System.out.println("Se ha ingresado un valor inválido, vuelva a intentarlo");
                 return "";
@@ -84,7 +79,7 @@ public class Banco {
         double comision;
         Persona[] propietarios = new Persona[datosPersonales.length];
         try {
-            Scanner sc = new Scanner(System.in);
+            Scanner sc;
             if (esEmpresa) {
                 boolean confirm = false;
                 do {
@@ -106,7 +101,6 @@ public class Banco {
                 double maxDescubierto = pedirDoble("el máximo descubierto permitido");
                 comision = pedirDoble("El importe de comisión por descubierto");
                 dato = new CuentaCorrienteEmpresa(nombreEmp, propietarios, iban, saldoInicial, maxDescubierto, comision);
-                return dato;
             } else {
                 String iban = crearIBAN();
                 comision = pedirDoble("El importe por comisión");
@@ -116,8 +110,8 @@ public class Banco {
                         iban,
                         saldoInicial,
                         comision);
-                return dato;
             }
+            return dato;
         } catch (Exception e) {
             return null;
         }
@@ -142,20 +136,20 @@ public class Banco {
      * @return el IBAN ya formado
      */
     private String crearIBAN() {
-        StringBuffer temp;
+        StringBuilder temp;
         String iban;
         boolean repetido = true;
         do {
-            temp = new StringBuffer("ES");
+            temp = new StringBuilder("ES");
             for (int i = 0; i < 20; i++)
                 temp.append((int)(Math.random() * 10));
             iban = temp.toString();
-            if (this.numCuentas > 0) {
+            if (getNumCuentas() > 0) {
                 int j = 0;
-                while (j < this.numCuentas && this.cuentas[j].getIBAN() != iban)
+                while (j < getNumCuentas() && !this.cuentas[j].getIBAN().equals(iban))
                     j++;
 
-                if (j == this.numCuentas) {
+                if (j == getNumCuentas()) {
                     repetido = false;
                 }
             } else repetido = false;
@@ -168,9 +162,9 @@ public class Banco {
      * @return la lista de cuentas
      */
     public String listarCuentas() {
-        StringBuffer msg = new StringBuffer();
+        StringBuilder msg = new StringBuilder();
         for(int i = 0; i < this.getNumCuentas(); i++) {
-            msg.append(this.cuentas[i].devolverInfoString()+"\n");
+            msg.append(this.cuentas[i].devolverInfoString()).append("\n");
         }
         return msg.toString();
     }

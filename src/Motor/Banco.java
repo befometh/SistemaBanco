@@ -14,13 +14,15 @@ public class Banco {
     private final int MAX_CUENTAS = 100;
     private int numCuentas;
 
+    /**
+     * Constructor, crea la lista de cuentas según los datos ingresados
+     */
     public Banco() {
         this.cuentas = new CuentaBancaria[this.MAX_CUENTAS];
         this.numCuentas = 0;
     }
 
     //Getters y Setters
-
 
     public int getMAX_CUENTAS() {
         return MAX_CUENTAS;
@@ -122,10 +124,10 @@ public class Banco {
     }
 
     /**
-     *
-     * @param datosPersonales
-     * @param saldoInicial
-     * @return
+     * Luego de ingresar los datos básicos de una cuenta bancaria, se genera un creador para la cuenta de ahorros
+     * @param datosPersonales datos del titular
+     * @param saldoInicial saldo con el que empieza la cuenta
+     * @return La cuenta con la estructura ya creada
      */
     private CuentaBancaria crearAhorros(String[] datosPersonales, double saldoInicial) {
         CuentaAhorro dato;
@@ -136,21 +138,21 @@ public class Banco {
     }
 
     /**
-     *
-     * @return
+     *Generador de IBAN, crea el IBAN y garantiza que no se repita en la lista
+     * @return el IBAN ya formado
      */
     private String crearIBAN() {
         StringBuffer temp;
-        String dato;
+        String iban;
         boolean repetido = true;
         do {
             temp = new StringBuffer("ES");
             for (int i = 0; i < 20; i++)
                 temp.append((int)(Math.random() * 10));
-            dato = temp.toString();
+            iban = temp.toString();
             if (this.numCuentas > 0) {
                 int j = 0;
-                while (j < this.numCuentas && this.cuentas[j].getIBAN() != dato)
+                while (j < this.numCuentas && this.cuentas[j].getIBAN() != iban)
                     j++;
 
                 if (j == this.numCuentas) {
@@ -158,12 +160,12 @@ public class Banco {
                 }
             } else repetido = false;
         } while (repetido);
-        return dato;
+        return iban;
     }
 
     /**
-     *
-     * @return
+     *Devuelve un String con la lista de cuentas en formato tabla
+     * @return la lista de cuentas
      */
     public String listarCuentas() {
         StringBuffer msg = new StringBuffer();
@@ -173,6 +175,11 @@ public class Banco {
         return msg.toString();
     }
 
+    /**
+     *Pide los datos de ingreso adicionales para la creación de cuentas específicas, no sale del ciclo hasta que se ingrese el valor adecuadamente.
+     * @param tipoDato Lo que aparece en pantalla, el dato requerido
+     * @return El dato ya formateado
+     */
     private double pedirDoble(String tipoDato) {
         Scanner sc;
         double dato = 0;
@@ -191,18 +198,28 @@ public class Banco {
         return dato;
     }
 
-    public String mostrarCuenta(String dato) {
-        int ubicacion = buscarCuenta(dato);
+    /**
+     * Muestra una cuenta bancaria solicitada
+     * @param iban el IBAN de la cuenta a mostrar
+     * @return la cuenta en cuestión en formato texto tipo tabla
+     */
+    public String mostrarCuenta(String iban) {
+        int ubicacion = buscarCuenta(iban);
         if(ubicacion == -1)
             return "";
         else
             return cuentas[ubicacion].devolverInfoString();
     }
 
-    private int buscarCuenta(String dato) {
+    /**
+     * Buscador de cuentas, privado ya que funciona solo para el funcionamiento interno de la clase Banco
+     * @param iban IBAN de la cuenta a buscar
+     * @return la posición en el arreglo de la cuenta
+     */
+    private int buscarCuenta(String iban) {
         int i=0;
         int tam = getNumCuentas();
-        while(i < tam && !cuentas[i].getIBAN().equals(dato))
+        while(i < tam && !cuentas[i].getIBAN().equals(iban))
             i++;
         if(i<tam)
             return i;
@@ -210,8 +227,14 @@ public class Banco {
             return -1;
     }
 
-    public boolean ingresoBancario(String dato, double ingreso) {
-        int pos = buscarCuenta(dato);
+    /**
+     * Modifica el saldo de la cuenta en caso de un ingreso
+     * @param iban IBAN de la cuenta a modificar
+     * @param ingreso valor del saldo nuevo
+     * @return verdadero si se completa con éxito, falso si hubo un error en la transacción
+     */
+    public boolean ingresoBancario(String iban, double ingreso) {
+        int pos = buscarCuenta(iban);
         if(ingreso > 0) {
             if (pos == -1) return false;
             else {
@@ -224,8 +247,14 @@ public class Banco {
         }
     }
 
-    public boolean retiroBancario(String dato, double retiro) {
-        int pos = buscarCuenta(dato);
+    /**
+     * Modifica la cuenta en caso e un retiro
+     * @param iban IBAN de la cuenta a la que se hará un retiro
+     * @param retiro monto a retirar
+     * @return verdadero si la transacción es exitosa, falso si hay errores como que el IBAN no se encuentre o no se pueda realizar el retiro
+     */
+    public boolean retiroBancario(String iban, double retiro) {
+        int pos = buscarCuenta(iban);
         if(pos == -1) return false;
         else{
             double diferencia = cuentas[pos].getSaldo() - retiro;
@@ -237,8 +266,13 @@ public class Banco {
         }
     }
 
-    public double obtenerSaldo(String dato) {
-        int pos = buscarCuenta(dato);
+    /**
+     * Muestra el saldo de una cuenta en concreto
+     * @param iban el IBAN de la cuenta a consultar
+     * @return el saldo actual o -1 si no se encuentra dicha cuenta
+     */
+    public double obtenerSaldo(String iban) {
+        int pos = buscarCuenta(iban);
         if(pos == -1) return -1;
         else return cuentas[pos].getSaldo();
     }

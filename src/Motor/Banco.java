@@ -153,8 +153,11 @@ public class Banco {
      */
     public String listarCuentas() {
         StringBuilder msg = new StringBuilder();
+        int contador = 0;
         for(CuentaBancaria dato : cuentas.values()) {
-            msg.append(dato.devolverInfoString()).append("\n");
+            msg.append(dato.devolverInfoString());
+            contador ++;
+            if(contador != cuentas.size()) msg.append("\n");
         }
         return msg.toString();
     }

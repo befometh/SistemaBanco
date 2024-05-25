@@ -56,11 +56,11 @@ public class CuentaCorrienteEmpresa extends CuentaBancaria implements Imprimible
     public String devolverInfoString() {
     //"|\tIBAN\t|\tPROPIETARIO\t|\tSALDO\t|\tDETALLES\t|"
         String[] cuenta = super.devolverInfoString().split(",");
-        StringBuffer mensaje = new StringBuffer("|\t");
+        StringBuilder mensaje = new StringBuilder("|\t");
         mensaje.append(cuenta[0]+"\t|\t");
-        mensaje.append(empresa.getNombreEmp()+"\t|\t");
+        mensaje.append("Empresa: "+empresa.getNombreEmp()+"\t|\t");
         mensaje.append(cuenta[1]+"\t|\t");
-        mensaje.append("Max Descubierto: " + maxDescubierto + " , Interes Descubierto: " + interesDescubierto + "\t|");
+        mensaje.append("Max Descubierto: " + maxDescubierto + " , Interés por Descubierto: " + interesDescubierto + "\t|");
         return mensaje.toString();
     }
 

@@ -1,3 +1,7 @@
+/**
+ * @author Cristyan Morales Acevedo
+ * @desc Clase persona, almacena los datos de cada cliente y/o propietario de empresa
+ */
 package Esquema;
 
 public class Persona {
@@ -5,6 +9,12 @@ public class Persona {
     private String apellido;
     private String dni;
 
+    /**
+     * Constructor
+     * @param nombre del titular o titulares
+     * @param apellido del titular o titulares
+     * @param dni del titular o titulares
+     */
     public Persona(String nombre, String apellido, String dni) {
         this.nombre = nombre;
         this.apellido = apellido;

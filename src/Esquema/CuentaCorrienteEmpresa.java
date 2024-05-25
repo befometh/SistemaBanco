@@ -2,13 +2,19 @@ package Esquema;
 
 import Interfaces.*;
 
-public class CuentaCorrienteEmpresa extends CuentaBancaria implements Imprimible, ClaseCuenta {
+public class CuentaCorrienteEmpresa extends CuentaBancaria implements Imprimible{
     Empresa empresa;
     double maxDescubierto, interesDescubierto;
 
-
-    //Constructor
-
+    /**
+     * Constructor
+     * @param nombreEmp Nombre de la empresa que va a estar asociada a la cuenta
+     * @param propietarios de la empresa
+     * @param iban asociado a la empresa
+     * @param saldo inicial con el que empieza la cuenta
+     * @param maxDescubierto Máximo en descubierto con el que inicia la cuenta
+     * @param interesDescubierto El interés por descubierto con el que inicia la cuenta
+     */
     public CuentaCorrienteEmpresa(String nombreEmp, Persona[] propietarios, String iban, double saldo, double maxDescubierto, double interesDescubierto) {
         super(iban, saldo);
         this.maxDescubierto = maxDescubierto;
@@ -42,6 +48,10 @@ public class CuentaCorrienteEmpresa extends CuentaBancaria implements Imprimible
         this.interesDescubierto = interesDescubierto;
     }
 
+    /**
+     * Método que permite que se entregue los datos a los usuarios, cumple con el formato del método cabecera() de la clase Principal
+     * @return El dato ya construido.
+     */
     @Override
     public String devolverInfoString() {
     //"|\tIBAN\t|\tPROPIETARIO\t|\tSALDO\t|\tDETALLES\t|"
@@ -54,6 +64,10 @@ public class CuentaCorrienteEmpresa extends CuentaBancaria implements Imprimible
         return mensaje.toString();
     }
 
+    /**
+     * Método disponible para futuros usos, devuelve el nombre de los propietarios de la empresa creada
+     * @return la lista de propietarios
+     */
     public String devolverPropietarios(){
         StringBuffer mensaje = new StringBuffer("Lista de propietarios:\n");
         int contador=1;
@@ -65,8 +79,5 @@ public class CuentaCorrienteEmpresa extends CuentaBancaria implements Imprimible
         return mensaje.toString();
     }
 
-    public String tipoCuenta() {
-        return "Empresa";
-    }
 }
 

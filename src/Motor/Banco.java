@@ -246,6 +246,10 @@ public class Banco {
         else return false;
     }
 
+    /**
+     * Comentario
+     * @return si funciona
+     */
     public boolean subirBD(){
         System.out.println(cuentas);
         return true;

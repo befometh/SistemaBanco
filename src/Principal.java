@@ -221,7 +221,7 @@ public class Principal {
                         }
                         break; //Fin case 7
                     case 8:
-                        banco.subirBD();
+                        banco.subirBD(); //cambio
                         salir = true; //Se cambia variable de salida
                         break;
                 } //Fin del switch

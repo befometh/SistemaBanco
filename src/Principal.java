@@ -221,11 +221,13 @@ public class Principal {
                         }
                         break; //Fin case 7
                     case 8:
+                        banco.subirBD();
                         salir = true; //Se cambia variable de salida
                         break;
                 } //Fin del switch
                 separador();
             } catch (Exception e) {
+
                 System.out.println("El valor que se ha ingresado es inválido"); //Error que se produce si en algún momento se ingresa un valor inválido al momento de crear una nueva cuenta bancaria
             }
         }//Fin del while

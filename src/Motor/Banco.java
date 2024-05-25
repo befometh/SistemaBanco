@@ -245,4 +245,9 @@ public class Banco {
         }
         else return false;
     }
+
+    public boolean subirBD(){
+        System.out.println(cuentas);
+        return true;
+    }
 }

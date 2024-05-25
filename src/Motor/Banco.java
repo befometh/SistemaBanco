@@ -164,7 +164,8 @@ public class Banco {
     public String listarCuentas() {
         StringBuilder msg = new StringBuilder();
         for(int i = 0; i < this.getNumCuentas(); i++) {
-            msg.append(this.cuentas[i].devolverInfoString()).append("\n");
+            msg.append(this.cuentas[i].devolverInfoString());
+            if(i != this.getNumCuentas()-1)msg.append("\n");
         }
         return msg.toString();
     }

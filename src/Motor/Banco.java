@@ -208,16 +208,14 @@ public class Banco {
         if (cuentas.containsKey(iban)) {
                 CuentaBancaria dato = cuentas.get(iban);
                 double diferencia = dato.getSaldo() - retiro;
-                if(diferencia > 0) {
+                if(diferencia >= 0) {
                     dato.setSaldo(diferencia);
                     cuentas.put(iban, dato);
                     return true;
                 }else {
-                    System.out.println("Fondos insuficientes.");
                     return false;
                 }
         }else {
-            System.out.println("La cuenta bancaria no existe");
             return false;
         }
     }
@@ -233,5 +231,18 @@ public class Banco {
             return cuentas.get(iban).getSaldo();
         }
         else return -1;
+    }
+
+    /**
+     * Elimina la cuenta
+     * @param iban de la cuenta a eliminar
+     * @return verdadero si es exitoso, falso si no
+     */
+    public boolean eliminarCuenta(String iban) {
+        if (cuentas.containsKey(iban)) {
+            cuentas.remove(iban);
+            return true;
+        }
+        else return false;
     }
 }

@@ -48,6 +48,25 @@ public class Validador {
     }
 
     /**
+     * Registro de números en formato int
+     * @param nomDato nombre del dato a ingresar, lo que se enseña en pantalla al llamar el método.
+     * @return dato ya verificado, si falla retorna -1
+     */
+    public static int pedirInt(String nomDato) {
+        Scanner teclado;
+        int opcion;
+        try {
+            teclado = new Scanner(System.in);
+            System.out.println(nomDato);
+            opcion = teclado.nextInt();
+            return opcion;
+        } catch (Exception e) {
+            System.err.println("El dato que ha ingresado no es válido, vuelva a intentarlo.");
+            return -1;
+        }
+    }
+
+    /**
      * Pide los datos del usuario
      * @param nomDato recibe el nombre del dato, lo que se enseña en pontalla
      * @return devuelve el dato recibido
@@ -110,4 +129,6 @@ public class Validador {
         Matcher matcher = validador.matcher(dato);
         return matcher.matches();
     }
+
+
 }//Fin de clase

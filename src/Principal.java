@@ -13,7 +13,8 @@ import static Motor.Validador.*;
 public class Principal {
     static final String nomArchivo = "datoscuentabancaria.dat"; //Se ingresan los archivos de
     static final String rutaWindows = "C:\\BD\\"+nomArchivo; // Ruta base si el so es basado en Windows
-    static final String rutaLinux = "/home/BD/" + nomArchivo; // Ruta base si el SO es basado en Linux
+    static final String rutaLinux = System.getProperty("user.home") +"/BD/"+ nomArchivo; // Ruta base si el SO es basado en Linux
+    static String sistemaOp; //Variable que va a almacenar el nombre del sistema operativo
     static File archivo; // Entidad que representa al archivo donde se encuentra la BD
     static Banco banco; // bjeto que interactuará con la clase banco
 
@@ -24,8 +25,9 @@ public class Principal {
         int opcion; //variable que almacena donde se va a guardar el dato
         boolean salir = false; //variable que cambia si se decide guardar la información
 
-        cargarBDSegunSO(); //Se solicita la orden de cargar la BD dependiendo el SO en el que nos encontremos
+        sistemaOp = cargarBDSegunSO(); //Se solicita la orden de cargar la BD dependiendo el SO en el que nos encontremos
 
+        //menú inicial
         while (!salir) {
             teclado = new Scanner(System.in); //Variable que recibe las opciones del usuario, y funciona como escucha pincipal
             teclado.useDelimiter("\n"); //Indica al Scanner teclado donde debe detenerse para dejar de recibir datos
@@ -42,13 +44,22 @@ public class Principal {
                     Ingrese una opción:""");
 
             try {
+                //Se escucha al teclado el valor, si no se ingresa correctamente, arroja error a la pantalla y vuelva  intentarlo
                 opcion = teclado.nextInt();
-                boolean error = false; //Booleano que va a auditar el programa constantemente, validando si hay errores de ingreso, si hay error, no se continúa más esta sección y se arroja error
-                switch (opcion) {
+                /*Booleano que va a auditar el programa constantemente, validando si hay errores de ingreso, si hay error,
+                 no se continúa más esta sección y se arroja error*/
+                boolean error = false; //Variable que escuchará permanentemente si se presenta un error
+                switch (opcion) { //Ingreso a la lista de opciones de manera lógica
                     case 1:
-                        boolean esEmpresa = false; //Inicialización de la variable esEmpresa, quien va a ser verdadera si lo es y falsa si no lo es, más adelante
+
+                        //Inicialización de la variable esEmpresa, quien va a ser verdadera si lo es y falsa si no lo es,
+                        // más adelante
+                        boolean esEmpresa = false;
                         int seleccion; //Selección del usuario
-                        String[][] propietarios = null; //Arreglo que contiene los propietarios de la cuenta, en caso de requerirse varios, de lo contrario será una única persona
+
+                        //Arreglo que contiene los propietarios de la cuenta, en caso de requerirse varios,
+                        // de lo contrario será una única persona
+                        String[][] propietarios = null;
                         int tipoCuenta = 1; //Valor base de la cuenta, inicializado en "Corriente" (opción 1)
                         double saldoInicial = 0; //Almacén del saldo con el que empieza la cuenta
                         System.out.println("Ha elegido crear nueva cuenta.");
@@ -90,20 +101,37 @@ public class Principal {
                             }
                         }
                         if (!error) {
-                            if (tipoCuenta == 1 && esEmpresa) {//Las empresas sólamente pueden tener cuentas corrientes, por ende estas dos condiciones deben ser verdaderas
-                                seleccion = pedirOpcion("Por favor ingrese el número de personas que componen la titularidad de su empresa"); //Se solicita el número de propietarios de la empresa, y ese valor se indica para crear el arreglo que va a llevar sus datos personales
+                            //Las empresas sólamente pueden tener cuentas corrientes, por ende estas dos condiciones
+                            // deben ser verdaderas
+                            if (tipoCuenta == 1 && esEmpresa) { //Se confirma si se trata con una empresa o no
+
+                                //Se solicita el número de propietarios de la empresa, y ese valor se indica para crear
+                                // el arreglo que va a llevar sus datos personales
+                                seleccion = pedirOpcion("Por favor ingrese el número de personas que componen la " +
+                                        "titularidad de su empresa");
+
+                                //Se llama al método de validador que permite ingresar a todos los propietarios
                                 propietarios = (ingresarPropietarios(seleccion));
                             } else {
-                                propietarios = (ingresarPropietarios(1)); //En el caso de no ser empresa, se da por hecho que solo hay un propietario como persona natural, aun siendo una cuenta corriente
+
+                                //En el caso de no ser empresa, se da por hecho que solo hay un propietario como persona
+                                // natural, aun siendo una cuenta corriente
+                                propietarios = (ingresarPropietarios(1));
                             }
-                            saldoInicial = pedirDoble("La cantidad inicial a ingresar: "); //Se asigna la cantidad inicial, no debe ser un número negativo
+
+                            //Se asigna la cantidad inicial,
+                            // no debe ser un número negativo
+                            saldoInicial = pedirDoble("La cantidad inicial a ingresar: ");
                             if (saldoInicial < 0)
                                 error = true;
                         }
                         if (!error) {
-                            String iban = banco.abrirCuenta(propietarios, tipoCuenta, saldoInicial, esEmpresa); //Se crea la cuenta, abrirCuenta() de Banco devuelve el número de IBAN de la cuenta ya creada, para ser listada con facilidad.
+
+                            //Se crea la cuenta, abrirCuenta() de Banco devuelve el número de IBAN de la cuenta ya
+                            // creada, para ser listada con facilidad.
+                            String iban = banco.abrirCuenta(propietarios, tipoCuenta, saldoInicial, esEmpresa);
                             System.out.println("Se ha creado la cuenta con éxito, cuenta creada: ");
-                            cabeceroTabla();
+                            cabeceroTabla(); //Se crea gráficamente un cabecero
                             System.out.println(banco.buscarCuenta(iban)); //Se muestra la información de la cuenta recién creada
                         } else {
                             separador();
@@ -112,8 +140,12 @@ public class Principal {
                         break; //Fin case 1
 
                     case 2:
-                        if (banco.listaVacia())
-                            System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar"); //Este error se presenta constantemente en el código, se manifiesta si aún no se ha creado ninguna cuenta
+                        if (banco.listaVacia()) {
+
+                            //Este error se presenta constantemente en el código, se manifiesta si aún no se ha creado ninguna cuenta
+                            System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para " +
+                                    "continuar");
+                        }
                         else {
                             cabeceroTabla();
                             System.out.println(banco.listarCuentas()); //Se solicita la lista de cuentas total
@@ -122,13 +154,21 @@ public class Principal {
 
                     case 3:
                         if (banco.listaVacia())
-                            System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar");
+                            System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para " +
+                                    "continuar");
                         else {
                             String dato;
                             dato = pedirDato("Por favor ingrese el IBAN de la cuenta a buscar:");
-                            if (validarPatron(dato, "[Ee][Ss][0-9]{20}")) { //se usa el método estático de Validadores validarPatron para verificar que el iban cumpla con las características
-                                dato = dato.toUpperCase(); //Se asegura que la forma del IBAN tenga caracteres en mayúscula
-                                String msg = banco.buscarCuenta(dato); //Se invoca al método de banco mostrarCuenta(), si falla arroja un String vacio ("")
+
+                            // Se usa el método estático de Validadores validarPatron para verificar que el iban cumpla
+                            // con las características
+                            if (validarPatron(dato, "[Ee][Ss][0-9]{20}")) {
+
+                                //Se asegura que la forma del IBAN tenga caracteres en mayúscula
+                                dato = dato.toUpperCase();
+
+                                //Se invoca al método de banco mostrarCuenta(), si falla arroja un String vacio ("")
+                                String msg = banco.buscarCuenta(dato);
                                 if (msg.isEmpty()) {
                                     System.out.println("No se ha encontrado el dato"); //Error si no se encuentra el dato
                                 } else {
@@ -136,23 +176,39 @@ public class Principal {
                                     System.out.println(msg); //Se enseña el dato que solicita el usuario
                                 }
                             } else
-                                System.out.println("El dato que ha ingresado no tiene el formato de un IBAN, vuelva a intentarlo.");
+                                System.out.println("El dato que ha ingresado no tiene el formato de un IBAN, vuelva a " +
+                                        "intentarlo.");
                         }
                         break; //Fin case 3
                     case 4:
                         if (banco.listaVacia())
-                            System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para continuar");
+                            System.out.println("Aún no se ha ingresado ningún valor, cree al menos una cuenta para " +
+                                    "continuar");
                         else {
-                            String dato;
+                            String dato; //Se declara la variable escucha
                             dato = pedirDato("Por favor ingrese el IBAN de la cuenta a buscar:");
+
+                            //Se confirma que el dato esté bien consolidado
                             if (validarPatron(dato, "[Ee][Ss][0-9]{20}")) {
-                                dato = dato.toUpperCase(); //Se convierte el dato ingresado por el usuario al formato almacenado, en mayúsculas
-                                double ingreso = pedirDoble("Ingrese el monto que desea ingresar"); //Se hace el ingreso del monto a sumar en la cuenta
-                                error = banco.ingresoBancario(dato, ingreso); // se solicita la operación, tiene un booleano de nombre error que variará en función de si se pudo cumplir o no la operación
+
+                                //Se convierte el dato ingresado por el usuario al formato almacenado, en mayúsculas
+                                dato = dato.toUpperCase();
+
+                                //Se hace el ingreso del monto a sumar en la cuenta
+                                double ingreso = pedirDoble("Ingrese el monto que desea ingresar");
+
+                                // se solicita la operación, tiene un booleano de nombre error que variará en función de
+                                // si se pudo cumplir o no la operación
+                                error = banco.ingresoBancario(dato, ingreso);
                                 if (!error)
                                     System.out.println("No se ha encontrado el dato"); //Error si no se encuentra el IBAN
-                                else
-                                    System.out.println("Se ha realizado el ingreso con éxito. nuevo Saldo: " + banco.obtenerSaldo(dato)); //Se muestra si se ingresa un monto con éxito, también enseña el saldo actual llamando a obtenerSaldo() de banco
+                                else {
+
+                                    //Se muestra si se ingresa un monto con éxito, también enseña el saldo actual
+                                    // llamando a obtenerSaldo() de banco
+                                    System.out.println("Se ha realizado el ingreso con éxito. nuevo Saldo: "
+                                            + banco.obtenerSaldo(dato));
+                                }
                             }
                         }
                         break;//Fin case 4
@@ -232,37 +288,10 @@ public class Principal {
                         }
                         break; //Fin case 7
                     case 8:
-                        if (!archivo.exists()) {
-                            try{
-                                String [] elementos = archivo.getPath().split("[\\\\]");
-                                StringBuilder temp = new StringBuilder();
-                                int contador = 0;
-                                for(String elemento : elementos) {
-                                    contador ++;
-                                    temp.append(elemento);
-                                    if(contador != elementos.length) {
-                                        temp.append("\\");
-                                        if (!(new File(temp.toString()).exists())) {
-                                            File directorio = new File(temp.toString());
-                                            directorio.mkdir();
-                                        }
-                                    } else {
-                                      if (!(new File(temp.toString()).exists())) {
-                                          File bd = new File(temp.toString());
-                                          bd.createNewFile();
-                                      }
-                                    }
-                                }
-                            }catch(IOException e){
-                                System.out.println("No es posible acceder al archivo");
-                            }
-                            catch(Exception e){
-                                System.out.println("Se ha producido un error inesperado: "+e.getMessage());
-                                e.printStackTrace();
-                            }
+                        if (!archivo.exists()) { //Se confirma si el archivo no existe
+                            comprobarDirectorio(); //Se llama el método de comprobación y creación de archivo
                         }
                         salir = banco.subirBD(archivo.getPath()); //Se cambia variable de salida
-
                         break; //Fin case 8
                 } //Fin del switch
                 separador();
@@ -288,7 +317,7 @@ public class Principal {
     /**
      * Método que permite cargar el archivo
      */
-    public static void cargarBDSegunSO(){
+    public static String cargarBDSegunSO(){
         String nombreSO = System.getProperty("os.name").toLowerCase(); //Se trae el nombre del sistema operativo y se almacena en la variable
         try{
             /*
@@ -303,6 +332,62 @@ public class Principal {
                 banco.cargarBD(archivo.getPath()); //Se implementa cargarBD de Banco
         } catch (Exception e){
             System.err.println("No ha sido posible cargar la BD"+e.getMessage()); //Error si se presenta una excepción
+        }
+        return nombreSO;
+    }
+
+    /**
+     * Método que confirma que la carpeta de la BD ha sido creada, si no lo está, la crea
+     */
+    private static void comprobarDirectorio() {
+        String regex = ""; //Se crea e inicializa la variable que luego hará parte del split
+        String builder = ""; //Se crea e inicializa la variable que luego permitirá reconstruir la ruta
+        try{
+            if(sistemaOp.contains("win")){ //Caso 1: Sistema operativo windows
+            regex = "[\\\\]"; //crea un string formato regex para reconocer los \ (es cuadruple porque son un par de caracteres escape y valor)
+            builder = "\\"; //crea un string para reconocer los \, (es doble porque el primero es un caracter de escape)
+            } else if (sistemaOp.contains("nix")||sistemaOp.contains("nux")) { //Caso 2: Sistema operativo linux/unix
+            regex = "/"; //en el caso de linux se utiliza solamente la barra diagonal, en esta situación no hay problema y no requiere variables de escape
+            builder = regex;
+            }
+
+            //se parte la ruta en sus partes fundamentales y se asigna a un array, se usa el regex tratado anteriormente
+            String [] elementos = archivo.getPath().split(regex);
+            //Se crea un buffer de carga de la ruta confirmada
+            StringBuilder temp = new StringBuilder();
+            /*
+            Contador que garantiza:
+            1. Que las "\" o "/" terminen en la parte de directorios de la ruta
+            2. Que se aplique el mkdir para los directorios y el createNewFile() para el fichero de la BD
+             */
+            int contador = 0;
+            for(String elemento : elementos) { //For que recorre el arreglo de piezas que conforman la ruta de la BD
+                contador ++; //el contador empieza en 1
+
+                //Al buffer se le va reconstruyendo la ruta completa poco a poco, verificando que cada carpeta esté creada
+                temp.append(elemento);
+
+                //Se confirma que no estemos en la sección del fichero en la parte /directorios/fichero.dat
+                if(contador != elementos.length) {
+
+                    //Se le asigna el valor constructor builder para darle forma a la ruta
+                    temp.append(builder);
+
+                    //Se confirma que la sección del directorio en la que nos encontremos no existe, para proceder a la creación
+                    if (!(new File(temp.toString()).exists())) {
+
+                        //Si no existe, se crea el directorio, creando una variable temporal directorio
+                        File directorio = new File(temp.toString());
+                        directorio.mkdir(); //Orden de creación
+                    }
+                } else {
+                    //Al llegar al final del contador el tratamiento es distinto
+                    File bd = new File(temp.toString());
+                    bd.createNewFile(); //Se crea el fichero
+                }
+            }
+        }catch(IOException e){
+            System.out.println("No es posible acceder al archivo");
         }
     }
 }

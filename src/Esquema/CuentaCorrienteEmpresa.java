@@ -1,8 +1,10 @@
 package Esquema;
 
+import java.io.Serializable;
+
 import Interfaces.*;
 
-public class CuentaCorrienteEmpresa extends CuentaBancaria implements Imprimible{
+public class CuentaCorrienteEmpresa extends CuentaBancaria implements Imprimible, Serializable {
     Empresa empresa;
     double maxDescubierto, interesDescubierto;
 

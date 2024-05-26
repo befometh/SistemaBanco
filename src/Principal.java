@@ -5,21 +5,30 @@
 
 import Motor.Banco;
 
+import java.io.*;
 import java.util.*;
 
 import static Motor.Validador.*;
 
 public class Principal {
+    static final String nomArchivo = "datoscuentabancaria.dat"; //Se ingresan los archivos de
+    static final String rutaWindows = "C:\\BD\\"+nomArchivo; // Ruta base si el so es basado en Windows
+    static final String rutaLinux = "/home/BD/" + nomArchivo; // Ruta base si el SO es basado en Linux
+    static File archivo; // Entidad que representa al archivo donde se encuentra la BD
+    static Banco banco; // bjeto que interactuará con la clase banco
+
     public static void main(String[] args) {
 
-        Scanner sn;
-        Banco banco = new Banco();
-        int opcion;
-        boolean salir = false;
+        Scanner teclado; //Listener del teclado
+        banco = new Banco(); //Se inicializa el ventilador base de datos al momento de iniciar el programa
+        int opcion; //variable que almacena donde se va a guardar el dato
+        boolean salir = false; //variable que cambia si se decide guardar la información
+
+        cargarBDSegunSO(); //Se solicita la orden de cargar la BD dependiendo el SO en el que nos encontremos
 
         while (!salir) {
-            sn = new Scanner(System.in); //Variable que recibe las opciones del usuario, y funciona como escucha pincipal
-            sn.useDelimiter("\n"); //Indica al Scanner sn donde debe detenerse para dejar de recibir datos
+            teclado = new Scanner(System.in); //Variable que recibe las opciones del usuario, y funciona como escucha pincipal
+            teclado.useDelimiter("\n"); //Indica al Scanner teclado donde debe detenerse para dejar de recibir datos
             System.out.println("""
                     1. Abrir una nueva cuenta.
                     2. Ver un listado de las cuentas disponibles
@@ -33,7 +42,7 @@ public class Principal {
                     Ingrese una opción:""");
 
             try {
-                opcion = sn.nextInt();
+                opcion = teclado.nextInt();
                 boolean error = false; //Booleano que va a auditar el programa constantemente, validando si hay errores de ingreso, si hay error, no se continúa más esta sección y se arroja error
                 switch (opcion) {
                     case 1:
@@ -208,8 +217,10 @@ public class Principal {
                                                 boolean op = banco.eliminarCuenta(dato); //Se elimina la cuenta, si falla op será falso
                                                 if (op)
                                                     System.out.println("Se ha eliminado la cuenta de manera exitosa.");
-                                                else System.out.println("Ha ocurrido un error, vuelva a intentarlo"); //Error por fallo general
-                                            } else System.out.println("El saldo de la cuenta debe ser 0 antes de ser eliminada."); //Error si saldo no es 0
+                                                else
+                                                    System.out.println("Ha ocurrido un error, vuelva a intentarlo"); //Error por fallo general
+                                            } else
+                                                System.out.println("El saldo de la cuenta debe ser 0 antes de ser eliminada."); //Error si saldo no es 0
                                             break;
                                         case 2:
                                             break;
@@ -221,29 +232,77 @@ public class Principal {
                         }
                         break; //Fin case 7
                     case 8:
-                        banco.subirBD(); //cambio
-                        salir = true; //Se cambia variable de salida
-                        break;
+                        if (!archivo.exists()) {
+                            try{
+                                String [] elementos = archivo.getPath().split("[\\\\]");
+                                StringBuilder temp = new StringBuilder();
+                                int contador = 0;
+                                for(String elemento : elementos) {
+                                    contador ++;
+                                    temp.append(elemento);
+                                    if(contador != elementos.length) {
+                                        temp.append("\\");
+                                        if (!(new File(temp.toString()).exists())) {
+                                            File directorio = new File(temp.toString());
+                                            directorio.mkdir();
+                                        }
+                                    } else {
+                                      if (!(new File(temp.toString()).exists())) {
+                                          File bd = new File(temp.toString());
+                                          bd.createNewFile();
+                                      }
+                                    }
+                                }
+                            }catch(IOException e){
+                                System.out.println("No es posible acceder al archivo");
+                            }
+                            catch(Exception e){
+                                System.out.println("Se ha producido un error inesperado: "+e.getMessage());
+                                e.printStackTrace();
+                            }
+                        }
+                        salir = banco.subirBD(archivo.getPath()); //Se cambia variable de salida
+
+                        break; //Fin case 8
                 } //Fin del switch
                 separador();
             } catch (Exception e) {
-
                 System.out.println("El valor que se ha ingresado es inválido"); //Error que se produce si en algún momento se ingresa un valor inválido al momento de crear una nueva cuenta bancaria
             }
         }//Fin del while
     }//Fin del main
 
     public static void separador() { //Método enteramente estético, crea un separador
-        System.out.println("--------------------------------------------------------");
+        System.out.println("-".repeat(130)); //Se repite un guión 130 veces para hacer un separador
     }
 
     /**
      * Metodo estético, añade cabeceros a las tablas de datos
      */
     public static void cabeceroTabla() {
-        separador();
-        System.out.println("|\tIBAN\t|\tPROPIETARIO\t|\tSALDO\t|\tDETALLES\t|");
+        separador(); //Se implementa el método separador para dar estructura a la tabla
+        System.out.println("|\tIBAN\t|\tPROPIETARIO\t|\tSALDO\t|\tDETALLES\t|"); //formato del cabecero de las tablas
         separador();
     }
 
+    /**
+     * Método que permite cargar el archivo
+     */
+    public static void cargarBDSegunSO(){
+        String nombreSO = System.getProperty("os.name").toLowerCase(); //Se trae el nombre del sistema operativo y se almacena en la variable
+        try{
+            /*
+            Se verifica opciones:
+                Si el nombreSO contiene win, se entiende que es un windows
+                Si el nombreSO nux es linux, o nix es unix, ambos casos utilizan el formato /root
+             */
+            if (nombreSO.contains("win")) archivo = new File(rutaWindows);
+            else if (nombreSO.contains("nux")||nombreSO.contains("nix")) archivo = new File(rutaLinux);
+
+            if(archivo.exists()) // Si la base de datos existe se carga el archivo y se trae la base de datos
+                banco.cargarBD(archivo.getPath()); //Se implementa cargarBD de Banco
+        } catch (Exception e){
+            System.err.println("No ha sido posible cargar la BD"+e.getMessage()); //Error si se presenta una excepción
+        }
+    }
 }

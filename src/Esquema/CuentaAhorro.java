@@ -4,9 +4,11 @@
  */
 package Esquema;
 
+import java.io.Serializable;
+
 import Interfaces.*;
 
-public class CuentaAhorro extends CuentaBancaria implements Imprimible {
+public class CuentaAhorro extends CuentaBancaria implements Imprimible, Serializable {
     private double interes; //Porcentaje de interés de la cuenta
     private Persona titular; //Nombre del titular
 

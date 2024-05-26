@@ -4,7 +4,9 @@
  */
 package Esquema;
 
-public class Empresa {
+import java.io.Serializable;
+
+public class Empresa implements Serializable{
     private Persona [] propietarios;
     private String nombreEmp;
 

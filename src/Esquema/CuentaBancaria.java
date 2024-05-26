@@ -4,9 +4,11 @@
  */
 package Esquema;
 
-import Interfaces.*;
+import java.io.Serializable;
 
-public abstract class CuentaBancaria implements Imprimible { //Esta clase es abstracta, ya que no hay ninguna cuenta bancaria que no esté definida bajo los estándares de sus hijas
+import Interfaces.Imprimible;
+
+public abstract class CuentaBancaria implements Imprimible, Serializable { //Esta clase es abstracta, ya que no hay ninguna cuenta bancaria que no esté definida bajo los estándares de sus hijas
     String iban; //almacén del IBAN de la cuenta en concreto
     double saldo; //almacén del saldo de la cuenta
 

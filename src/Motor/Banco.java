@@ -6,6 +6,7 @@ package Motor;
 
 import Esquema.*;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -17,7 +18,7 @@ public class Banco {
     pero si necesita una clave de búsqueda, en este caso el DNI, que debe
     ser único para cada cuenta bancaria.
      */
-    private final HashMap<String,CuentaBancaria> cuentas = new HashMap<>();
+    private HashMap<String,CuentaBancaria> cuentas = new HashMap<>();
 
     public boolean listaVacia() {
         return cuentas.isEmpty();
@@ -250,11 +251,51 @@ public class Banco {
     }
 
     /**
-     * Comentario
-     * @return si funciona
+     * Sube la información a la base de datos
+     * @param ruta donde se encuentra el archivo
+     * @return booleano si es exitoso o no
      */
-    public boolean subirBD(){
-        System.out.println(cuentas);
+    public boolean subirBD(String ruta){
+        //Abrimos un acceso al disco por medio de un escritor
+        ObjectOutputStream escritor;
+        try{
+            //Creamos un gestor de flujos de bytes dentro del acceso anteriormente abierto
+            escritor = new ObjectOutputStream(new FileOutputStream(ruta));
+            escritor.writeObject(cuentas); //Escribimos cuentas, recordemos que cuentas es un objeto de tipo HashMap<String, CuentaBancaria>
+            escritor.close(); //Cerramos el acceso al disco
+        } catch (IOException e) {
+            System.err.println("No es posible acceder al archivo"); //Error por entrada y salida
+            return false;
+        } catch (Exception e){
+            System.err.println("Se ha producido un error inesperado: "+e.getMessage()); //Por si se presenta otro error desconocido
+            e.printStackTrace(); //Enseña la traza del error en pantalla
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Trae la base de datos al programa
+     * @param ruta donde se encuentra la base de datos
+     * @return booleano si es exitoso o no
+     */
+    public boolean cargarBD(String ruta){
+        ObjectInputStream lector; //Creamos la variable lectora del archivo, para acceder al disco
+        try {
+            lector = new ObjectInputStream(new FileInputStream(ruta)); //Traemos la ruta y creamos un flujo FileInputStream con ella
+            cuentas = (HashMap<String, CuentaBancaria>) lector.readObject(); //Se pasa el hashmap de cuentas a la base de datos, para ello todas las clases deben ser Serializables
+            lector.close(); //No olvidemos cerrar el acceso al disco
+        } catch (FileNotFoundException e) {
+            System.err.println("Archivo no encontrado"); //Error si no se encuentra el archivo
+            return false;
+        } catch (IOException e) {
+            System.err.println("No se puede acceder al archivo"); //Por si no se puede entrar al archivo o se encuentra dañado
+            return false;
+        } catch (ClassNotFoundException e) {
+            System.err.println("Se ha producido un error inesperado: " + e.getMessage()); //Por si se presenta un error desconocido
+            e.printStackTrace(); //Enseña la traza del error en pantalla
+            return false;
+        }
         return true;
     }
 }
